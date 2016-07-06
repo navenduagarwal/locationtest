@@ -14,16 +14,14 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String LOG_TAG = "Navendu";
     private TextView textOutput;
     private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
+    private Location mLastLocation;
     private int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 
     @Override
@@ -58,9 +56,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(1000); //Update location every second
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -68,24 +63,20 @@ public class MainActivity extends AppCompatActivity implements
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            textOutput.setText("Latitude: " + mLastLocation.getLatitude() + "\nLongitude: " + mLastLocation.getLongitude());
+        }
     }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.i(LOG_TAG, location.toString());
-        textOutput.setText("Latitude: " + Double.toString(location.getLatitude()) + "\nLongitude: " + Double.toString(location.getLongitude()));
-    }
-
 
     @Override
     public void onConnectionSuspended(int i) {
         Log.i(LOG_TAG, "GoogleApiClient connection has been suspended");
+        mGoogleApiClient.connect();
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(LOG_TAG, "GoogleApiClient connection has been suspended");
-        mGoogleApiClient.connect();
+        Log.i(LOG_TAG, "GoogleApiClient connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
 }
