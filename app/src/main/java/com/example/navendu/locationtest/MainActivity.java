@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+            super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         buildGoogleApiClient();
         textOutput = (TextView) findViewById(R.id.text_output);
@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(LOG_TAG, "GoogleApiClient connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
+            Log.i(LOG_TAG, "GoogleApiClient connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
+
 }
