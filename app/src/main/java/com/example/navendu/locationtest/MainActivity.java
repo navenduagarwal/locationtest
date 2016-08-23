@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.renderscript.Double2;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -19,12 +20,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private TextView textOutput;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-    private LocationRequest mLocationRequest;
     private int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 
     @Override
@@ -67,21 +67,10 @@ public class MainActivity extends AppCompatActivity implements
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
 
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(1000);
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,mLocationRequest,this);
-
-//        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//        if (mLastLocation != null) {
-//            textOutput.setText("Latitude: " + mLastLocation.getLatitude() + "\nLongitude: " + mLastLocation.getLongitude());
-//        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-     Log.i(LOG_TAG,location.toString());
-        textOutput.setText(Double.toString(location.getLatitude()));
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            textOutput.setText("Latitude: " + mLastLocation.getLatitude() + "\nLongitude: " + mLastLocation.getLongitude());
+        }
     }
 
     @Override
