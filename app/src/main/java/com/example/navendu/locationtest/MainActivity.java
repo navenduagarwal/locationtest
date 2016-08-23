@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLocationChanged(Location location) {
      Log.i(LOG_TAG,location.toString());
-        textOutput.setText(location.toString());
+        textOutput.setText(Double.toString(location.getLatitude()));
     }
 
     @Override
