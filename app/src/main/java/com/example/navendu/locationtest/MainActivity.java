@@ -14,14 +14,17 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private static final String LOG_TAG = "Navendu";
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private TextView textOutput;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
+    private LocationRequest mLocationRequest;
     private int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 
     @Override
@@ -63,10 +66,22 @@ public class MainActivity extends AppCompatActivity implements
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            textOutput.setText("Latitude: " + mLastLocation.getLatitude() + "\nLongitude: " + mLastLocation.getLongitude());
-        }
+
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(1000);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,mLocationRequest,this);
+
+//        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//        if (mLastLocation != null) {
+//            textOutput.setText("Latitude: " + mLastLocation.getLatitude() + "\nLongitude: " + mLastLocation.getLongitude());
+//        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+     Log.i(LOG_TAG,location.toString());
+        textOutput.setText(location.toString());
     }
 
     @Override
