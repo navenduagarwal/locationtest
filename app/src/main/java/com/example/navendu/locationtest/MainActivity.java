@@ -20,11 +20,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private TextView textOutput;
     private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
+    private LocationRequest mLocationRequest;
     private int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 
     @Override
@@ -67,10 +67,17 @@ public class MainActivity extends AppCompatActivity implements
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
 
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            textOutput.setText("Latitude: " + mLastLocation.getLatitude() + "\nLongitude: " + mLastLocation.getLongitude());
-        }
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(1000);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,mLocationRequest,this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+     Log.i(LOG_TAG,location.toString());
+        textOutput.setText("Latitude: " + location.getLatitude() + "\nLongitude: " + location.getLongitude());
+
     }
 
     @Override
